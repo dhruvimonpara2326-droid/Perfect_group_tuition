@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Outer white ring -->
+  <circle cx="100" cy="100" r="98" fill="white" stroke="#e0e0e0" stroke-width="1"/>
+  <!-- Navy blue border ring -->
+  <circle cx="100" cy="100" r="90" fill="#fce4ec" stroke="#1a237e" stroke-width="4"/>
+  <!-- Radial gradient for pink background -->
+  <defs>
+    <radialGradient id="pinkGrad" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fce4ec"/>
+      <stop offset="100%" stop-color="#f8bbd0"/>
+    </radialGradient>
+  </defs>
+  <circle cx="100" cy="100" r="88" fill="url(#pinkGrad)"/>
+  <!-- P letter - Magenta/Pink -->
+  <text x="52" y="135" font-family="Georgia, serif" font-size="110" font-weight="bold" fill="#ad1457" text-anchor="start">P</text>
+  <!-- G letter - Navy Blue, overlapping -->
+  <text x="82" y="128" font-family="Georgia, serif" font-size="85" font-weight="bold" fill="#1a237e" text-anchor="start">G</text>
+  <!-- T letter - Magenta/Pink -->
+  <text x="108" y="145" font-family="Georgia, serif" font-size="90" font-weight="bold" fill="#ad1457" text-anchor="start">T</text>
+</svg>
