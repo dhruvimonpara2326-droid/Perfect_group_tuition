@@ -1,30 +1,49 @@
 const Fees = require('../models/Fees');
 const Notification = require('../models/Notification');
+const User = require('../models/User');
 
 // POST /api/fees
 const addFeeRecord = async (req, res) => {
   try {
-    const { studentId, totalAmount, standard, batch, academicYear } = req.body;
+    const { standard, totalAmount, academicYear } = req.body;
 
-    if (!studentId || !totalAmount) {
-      return res.status(400).json({ message: 'Student ID and total amount are required' });
+    if (!standard || !totalAmount) {
+      return res.status(400).json({ message: 'Standard and total amount are required' });
     }
 
-    const existing = await Fees.findOne({ studentId, academicYear: academicYear || '2025-2026' });
-    if (existing) {
-      return res.status(400).json({ message: 'Fee record already exists for this student and academic year' });
+    const students = await User.find({ role: 'student', standard });
+
+    if (students.length === 0) {
+      return res.status(404).json({ message: `No students found in Standard ${standard}` });
     }
 
-    const fee = await Fees.create({
-      studentId,
-      totalAmount,
-      dueAmount: totalAmount,
-      standard,
-      batch,
-      academicYear: academicYear || '2025-2026'
+    const year = academicYear || '2025-2026';
+    let addedCount = 0;
+    let skippedCount = 0;
+
+    for (const student of students) {
+      const existing = await Fees.findOne({ studentId: student._id, academicYear: year });
+      if (existing) {
+        skippedCount++;
+        continue;
+      }
+
+      await Fees.create({
+        studentId: student._id,
+        totalAmount,
+        dueAmount: totalAmount,
+        standard: student.standard,
+        batch: student.batch,
+        academicYear: year
+      });
+      addedCount++;
+    }
+
+    res.status(201).json({
+      message: `Generated fees for ${addedCount} students. ${skippedCount > 0 ? `(${skippedCount} skipped as they already had records)` : ''}`,
+      addedCount,
+      skippedCount
     });
-
-    res.status(201).json(fee);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }

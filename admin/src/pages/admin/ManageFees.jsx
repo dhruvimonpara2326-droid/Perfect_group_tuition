@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { getFees, addFeeRecord, recordPayment, notifyDueFees, getStudents, getBatches } from '../../services/api';
 import { Plus, IndianRupee, Bell, X, CheckCircle, Search, Download, Eye, History, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -19,7 +19,7 @@ const ManageFees = () => {
   const [showPay, setShowPay] = useState(null);
   const [showHistory, setShowHistory] = useState(null);
   const [success, setSuccess] = useState('');
-  const [addData, setAddData] = useState({ studentId: '', totalAmount: '' });
+  const [addData, setAddData] = useState({ standard: '1', totalAmount: '' });
   const [payData, setPayData] = useState({ amount: '', method: 'cash', note: '' });
   const [currentPage, setCurrentPage] = useState(1);
   const perPage = 15;
@@ -46,28 +46,22 @@ const ManageFees = () => {
   };
 
   const loadStudentsForAdd = async () => {
-    try {
-      const res = await getStudents({});
-      setStudents(res.data);
-    } catch (err) { console.error(err); }
+    // No longer loading students for add form since we are adding by standard
   };
 
   const handleAdd = async (e) => {
     e.preventDefault();
     try {
-      const student = students.find(s => s._id === addData.studentId);
-      await addFeeRecord({
-        studentId: addData.studentId,
-        totalAmount: Number(addData.totalAmount),
-        standard: student?.standard,
-        batch: student?.batch
+      const res = await addFeeRecord({
+        standard: addData.standard,
+        totalAmount: Number(addData.totalAmount)
       });
       setShowAdd(false);
-      setAddData({ studentId: '', totalAmount: '' });
-      setSuccess('Fee record added!');
-      setTimeout(() => setSuccess(''), 3000);
+      setAddData({ standard: '1', totalAmount: '' });
+      setSuccess(res.data.message || 'Fee records generated systematically!');
+      setTimeout(() => setSuccess(''), 4000);
       loadFees();
-    } catch (err) { alert(err.response?.data?.message || 'Failed'); }
+    } catch (err) { alert(err.response?.data?.message || 'Failed to assign fees'); }
   };
 
   const handlePay = async (e) => {
@@ -373,16 +367,18 @@ const ManageFees = () => {
         <div className="modal-overlay" onClick={() => setShowAdd(false)}>
           <div className="modal" onClick={e => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Add Fee Record</h3>
+              <h3>Generate Fee Records</h3>
               <button className="modal-close" onClick={() => setShowAdd(false)}><X size={18} /></button>
             </div>
             <form onSubmit={handleAdd}>
               <div className="modal-body">
+                <div style={{ marginBottom: 15, fontSize: 13, color: '#64748b' }}>
+                  This will generate fee records for all students currently enrolled in the selected standard.
+                </div>
                 <div className="form-group">
-                  <label className="form-label">Student *</label>
-                  <select className="form-select" value={addData.studentId} onChange={e => setAddData({...addData, studentId: e.target.value})} required>
-                    <option value="">Select Student</option>
-                    {students.map(s => <option key={s._id} value={s._id}>{s.rollNo} - {s.name} (Std {s.standard})</option>)}
+                  <label className="form-label">Standard *</label>
+                  <select className="form-select" value={addData.standard} onChange={e => setAddData({...addData, standard: e.target.value})} required>
+                    {STANDARDS.map(s => <option key={s} value={s}>Std {s}</option>)}
                   </select>
                 </div>
                 <div className="form-group">
@@ -425,11 +421,8 @@ const ManageFees = () => {
                   <div className="form-group">
                     <label className="form-label">Payment Method</label>
                     <select className="form-select" value={payData.method} onChange={e => setPayData({...payData, method: e.target.value})}>
+                      <option value="online">Online</option>
                       <option value="cash">Cash</option>
-                      <option value="upi">UPI</option>
-                      <option value="bank_transfer">Bank Transfer</option>
-                      <option value="cheque">Cheque</option>
-                      <option value="other">Other</option>
                     </select>
                   </div>
                   <div className="form-group">

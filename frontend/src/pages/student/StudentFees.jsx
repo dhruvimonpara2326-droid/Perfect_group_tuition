@@ -193,23 +193,6 @@ const StudentFees = () => {
           </div>
           {showPayForm && (
             <div className="card-body">
-              <div style={{
-                background: 'linear-gradient(135deg, #eff6ff, #dbeafe)',
-                borderRadius: 10, padding: 16, marginBottom: 16,
-                border: '1px solid #bfdbfe'
-              }}>
-                <div style={{ fontSize: 12, color: '#1e40af', fontWeight: 600, marginBottom: 4 }}>
-                  Supported Payment Methods / સપોર્ટેડ પેમેન્ટ પદ્ધતિઓ
-                </div>
-                <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                  {['UPI / GPay / PhonePe', 'Credit Card', 'Debit Card', 'Net Banking', 'QR Code', 'Wallets'].map(m => (
-                    <span key={m} style={{
-                      fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 6,
-                      background: 'white', color: '#1e40af', border: '1px solid #93c5fd'
-                    }}>{m}</span>
-                  ))}
-                </div>
-              </div>
 
               <div style={{ marginBottom: 16 }}>
                 <label style={{ display: 'block', fontSize: 13, fontWeight: 600, color: '#334155', marginBottom: 6 }}>

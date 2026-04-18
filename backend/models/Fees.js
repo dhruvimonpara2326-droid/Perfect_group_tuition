@@ -28,7 +28,7 @@ const feesSchema = new mongoose.Schema({
     date: String,
     method: {
       type: String,
-      enum: ['cash', 'upi', 'bank_transfer', 'other'],
+      enum: ['cash', 'upi', 'bank_transfer', 'cheque', 'card', 'razorpay', 'online', 'other'],
       default: 'cash'
     },
     note: String
