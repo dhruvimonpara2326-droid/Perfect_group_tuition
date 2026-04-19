@@ -53,6 +53,11 @@ const DashboardLayout = ({ children }) => {
   );
 };
 
+const AdminRedirect = () => {
+  window.location.href = import.meta.env.VITE_ADMIN_URL || 'https://your-admin-domain.up.railway.app';
+  return null;
+};
+
 const AppRoutes = () => {
   const { isAuthenticated, user } = useAuth();
 
@@ -64,6 +69,9 @@ const AppRoutes = () => {
 
   return (
     <Routes>
+      {/* External Admin Route */}
+      <Route path="/admin" element={<AdminRedirect />} />
+
       {/* Public routes */}
       <Route path="/login" element={isAuthenticated ? <Navigate to={getDefaultRedirect()} /> : <Login />} />
       <Route path="/register" element={isAuthenticated ? <Navigate to={getDefaultRedirect()} /> : <Register />} />
