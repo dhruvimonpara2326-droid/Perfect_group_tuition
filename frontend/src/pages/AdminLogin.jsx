@@ -30,7 +30,11 @@ const AdminLogin = () => {
       loginUser(res.data);
       navigate('/admin');
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Invalid administrator credentials.');
+      if (!err.response) {
+        setError('Network Error: The Frontend cannot connect to the Backend API. Please check your VITE_API_URL variable in Railway.');
+      } else {
+        setError(err.response?.data?.message || 'Login failed. Invalid administrator credentials.');
+      }
     } finally {
       setLoading(false);
     }
