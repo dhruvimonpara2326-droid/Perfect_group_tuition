@@ -12,6 +12,20 @@ import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 
+// Admin pages
+import AdminLogin from './pages/AdminLogin';
+import AdminDashboard from './pages/admin/AdminDashboard';
+import ManageStudents from './pages/admin/ManageStudents';
+import ManageFaculty from './pages/admin/ManageFaculty';
+import ManageBatches from './pages/admin/ManageBatches';
+import ManageTimetable from './pages/admin/ManageTimetable';
+import ManageTestTimetable from './pages/admin/ManageTestTimetable';
+import ManageAttendance from './pages/admin/ManageAttendance';
+import ManageMarks from './pages/admin/ManageMarks';
+import ManageFees from './pages/admin/ManageFees';
+import ManageClasswork from './pages/admin/ManageClasswork';
+import ManageNotifications from './pages/admin/ManageNotifications';
+
 // Faculty pages
 import FacultyDashboard from './pages/faculty/FacultyDashboard';
 import ViewAssignedLectures from './pages/faculty/ViewAssignedLectures';
@@ -38,7 +52,7 @@ const DashboardLayout = ({ children }) => {
   const { user } = useAuth();
 
   const getPageTitle = () => {
-    const roleLabels = { faculty: 'Faculty Panel', student: 'Student Portal' };
+    const roleLabels = { admin: 'Admin Panel', faculty: 'Faculty Panel', student: 'Student Portal' };
     return roleLabels[user?.role] || 'Dashboard';
   };
 
@@ -53,30 +67,36 @@ const DashboardLayout = ({ children }) => {
   );
 };
 
-const AdminRedirect = () => {
-  window.location.href = import.meta.env.VITE_ADMIN_URL || 'https://your-admin-domain.up.railway.app';
-  return null;
-};
-
 const AppRoutes = () => {
   const { isAuthenticated, user } = useAuth();
 
   const getDefaultRedirect = () => {
     if (!isAuthenticated) return '/login';
-    const map = { faculty: '/faculty', student: '/student' };
+    const map = { admin: '/admin/dashboard', faculty: '/faculty', student: '/student' };
     return map[user?.role] || '/login';
   };
 
   return (
     <Routes>
-      {/* External Admin Route */}
-      <Route path="/admin" element={<AdminRedirect />} />
-
       {/* Public routes */}
       <Route path="/login" element={isAuthenticated ? <Navigate to={getDefaultRedirect()} /> : <Login />} />
+      <Route path="/admin" element={isAuthenticated ? <Navigate to={getDefaultRedirect()} /> : <AdminLogin />} />
       <Route path="/register" element={isAuthenticated ? <Navigate to={getDefaultRedirect()} /> : <Register />} />
       <Route path="/forgot-password" element={isAuthenticated ? <Navigate to={getDefaultRedirect()} /> : <ForgotPassword />} />
       <Route path="/reset-password/:token" element={isAuthenticated ? <Navigate to={getDefaultRedirect()} /> : <ResetPassword />} />
+
+      {/* Admin routes */}
+      <Route path="/admin/dashboard" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><AdminDashboard /></DashboardLayout></ProtectedRoute>} />
+      <Route path="/admin/students" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ManageStudents /></DashboardLayout></ProtectedRoute>} />
+      <Route path="/admin/faculty" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ManageFaculty /></DashboardLayout></ProtectedRoute>} />
+      <Route path="/admin/batches" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ManageBatches /></DashboardLayout></ProtectedRoute>} />
+      <Route path="/admin/timetable" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ManageTimetable /></DashboardLayout></ProtectedRoute>} />
+      <Route path="/admin/test-timetable" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ManageTestTimetable /></DashboardLayout></ProtectedRoute>} />
+      <Route path="/admin/attendance" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ManageAttendance /></DashboardLayout></ProtectedRoute>} />
+      <Route path="/admin/marks" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ManageMarks /></DashboardLayout></ProtectedRoute>} />
+      <Route path="/admin/fees" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ManageFees /></DashboardLayout></ProtectedRoute>} />
+      <Route path="/admin/classwork" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ManageClasswork /></DashboardLayout></ProtectedRoute>} />
+      <Route path="/admin/notifications" element={<ProtectedRoute allowedRoles={['admin']}><DashboardLayout><ManageNotifications /></DashboardLayout></ProtectedRoute>} />
 
       {/* Faculty routes */}
       <Route path="/faculty" element={<ProtectedRoute allowedRoles={['faculty']}><DashboardLayout><FacultyDashboard /></DashboardLayout></ProtectedRoute>} />
